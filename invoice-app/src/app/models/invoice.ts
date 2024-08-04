@@ -1,6 +1,6 @@
 import { Client } from "./client";
 import { Company } from "./company";
-import { Item } from "./itesm";
+import { Item } from "./items";
 
 export class Invoice {
     id!: number;
