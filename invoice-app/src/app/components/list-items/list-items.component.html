@@ -7,10 +7,11 @@
             <th>product</th>
             <th>price</th>
             <th>quantity</th>
+            <th>remove</th>
         </thead>
         <tbody>
             @for (item of items; track $index){
-                <tr row-item [item]="item"></tr>
+                <tr row-item [item]="item" (removeEventEmitter)="onRemove($event)"></tr>
             }
         </tbody>
     </table>

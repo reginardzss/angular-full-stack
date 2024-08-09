@@ -22,4 +22,8 @@ export class InvoiceComponent implements OnInit {
   ngOnInit(): void {
     this.invoice = this.service.getInvoice();
   }
+
+  removeItem(id: number){
+    this.invoice.items = this.invoice.items.filter(item => item.id != id);
+  }
 }
