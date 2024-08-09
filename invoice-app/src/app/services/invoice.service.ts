@@ -14,14 +14,14 @@ export class InvoiceService {
     return {... this.invoice, total};
   }
 
+  remove(id: number): Invoice{
+    this.invoice.items = this.invoice.items.filter(item => item.id != id);
+    const total = this.calculateTotal();
+
+    return {... this.invoice, total};
+  }
+
   calculateTotal(){
     return this.invoice.items.reduce((total, item) => total + (item.price * item.quantity), 0);
-    /* let total = 0;
-
-    this.invoice.items.forEach(item => {
-      total += item.total();
-      //total += (item.price * item.quantity);
-    });
-    return total; */
   }
 }
