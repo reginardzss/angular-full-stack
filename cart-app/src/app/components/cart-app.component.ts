@@ -20,8 +20,10 @@ export class CartAppComponent implements OnInit{
   
   ngOnInit(): void {
     this.products = this.service.findAll();
+    //si existe items obtenemos el JSON con la estructura JSON del tipo String de la sesion y lo convertimos a un arreglo de objeto del tipo items, sino un arreglo vacio
+    this.items = JSON.parse(sessionStorage.getItem('cart')!) || [];
     this.calculateTotal();
-  }
+}
 
   onAddCart(product: Product){
     //Se busca si el item ya existe dentro del arreglo de items
@@ -46,16 +48,22 @@ export class CartAppComponent implements OnInit{
       this.items = [... this.items, {product: {... product}, quantity:1}];
     }
     this.calculateTotal();
+    this.saveSession();
   }
 
   //la funcion recibe el id, luego lo filtra, si el id no es igual pasa, sino modifica la lista y no pasa
   onDeleteCart(id:number): void{
     this.items = this.items.filter(item => item.product.id !== id);
     this.calculateTotal();
+    this.saveSession();
   }
 
   //la funcion reduce recibe ((variable de storage, variable a modificar) => sumatoria, valor inicial)
   calculateTotal(): void{
     this.total = this.items.reduce((accumulator, item) => accumulator + item.quantity * item.product.price, 0);
+  }
+  saveSession(): void{
+    //con stringify se guarda todo el arreglo items como un string con la estructura de JSON
+    sessionStorage.setItem('cart',JSON.stringify(this.items));
   }
 }
