@@ -14,11 +14,13 @@ import { CartItem } from '../../models/cartItem';
 export class CartAppComponent implements OnInit{
   products: Product[] = [];
   items: CartItem[] = [];
+  total: number = 0;
 
   constructor(private service: ProductService){}
   
   ngOnInit(): void {
     this.products = this.service.findAll();
+    this.calculateTotal();
   }
 
   onAddCart(product: Product){
@@ -43,9 +45,17 @@ export class CartAppComponent implements OnInit{
       //si no existe el item dentro del carrito entonces lo agregamos con la cantidad de 1
       this.items = [... this.items, {product: {... product}, quantity:1}];
     }
+    this.calculateTotal();
   }
 
+  //la funcion recibe el id, luego lo filtra, si el id no es igual pasa, sino modifica la lista y no pasa
   onDeleteCart(id:number): void{
     this.items = this.items.filter(item => item.product.id !== id);
+    this.calculateTotal();
+  }
+
+  //la funcion reduce recibe ((variable de storage, variable a modificar) => sumatoria, valor inicial)
+  calculateTotal(): void{
+    this.total = this.items.reduce((accumulator, item) => accumulator + item.quantity * item.product.price, 0);
   }
 }
