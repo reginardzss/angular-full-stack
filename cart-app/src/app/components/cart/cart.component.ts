@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import { CartItem } from '../../../models/cartItem';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'cart',
@@ -7,27 +8,24 @@ import { CartItem } from '../../../models/cartItem';
   imports: [],
   templateUrl: './cart.component.html',
 })
-export class CartComponent implements OnChanges{
+export class CartComponent {
   
-  @Input() items: CartItem[] = [];
+  items: CartItem[] = [];
+
   total = 0;
-  @Output() idProductEventEmitter = new EventEmitter();
+  
+  idProductEventEmitter = new EventEmitter();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    let itemChanges = changes['items'];
-    this.calculateTotal();
-    this.saveSession();
-  }
-  //la funcion reduce recibe ((variable de storage, variable a modificar) => sumatoria, valor inicial)
-  calculateTotal(): void{
-    this.total = this.items.reduce((accumulator, item) => accumulator + item.quantity * item.product.price, 0);
-  }
-  saveSession(): void{
-    //con stringify se guarda todo el arreglo items como un string con la estructura de JSON
-    sessionStorage.setItem('cart',JSON.stringify(this.items));
-  }
+  constructor(private router:Router){
+    //le asignamos los items de los estados de las rutas
+    //Extras con ? en caso de que sea null, state es con el objeto que le pasamos de la plantilla
+    this.items = this.router.getCurrentNavigation()?.extras.state!['items'];
+    this.total = this.router.getCurrentNavigation()?.extras.state!['total'];
 
-  onDeleteCart(id: number){
+  }
+  
+  onDeleteCart(id: number) {
     this.idProductEventEmitter.emit(id);
   }
+
 }

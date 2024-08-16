@@ -4,19 +4,18 @@ import { Product } from '../../models/product';
 import { CatalogComponent } from './catalog/catalog.component';
 import { CartItem } from '../../models/cartItem';
 import { NavbarComponent } from './navbar/navbar.component';
-import { CartModalComponent } from './cart-modal/cart-modal.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'cart-app',
   standalone: true,
-  imports: [CatalogComponent, CartModalComponent, NavbarComponent],
+  imports: [CatalogComponent, NavbarComponent, RouterOutlet],
   templateUrl: './cart-app.component.html',
 })
 export class CartAppComponent implements OnInit{
   products: Product[] = [];
   items: CartItem[] = [];
-  //total: number = 0;
-  showCart: boolean = false;
+  total: number = 0;
 
   constructor(private service: ProductService){}
   
@@ -24,10 +23,10 @@ export class CartAppComponent implements OnInit{
     this.products = this.service.findAll();
     //si existe items obtenemos el JSON con la estructura JSON del tipo String de la sesion y lo convertimos a un arreglo de objeto del tipo items, sino un arreglo vacio
     this.items = JSON.parse(sessionStorage.getItem('cart') || '[]') ;
-    //this.calculateTotal();
+    this.calculateTotal();
 }
 
-  onAddCart(product: Product){
+  onAddCart(product: Product): void{
     //Se busca si el item ya existe dentro del arreglo de items
     //Con la funcion find le indicamos que del item compare el id del producto que agregué al carrito contra los id's de los productos que ya estan en el carrito, si lo encuentra devuelve true, de lo contrario false
     const hasItem = this.items.find(item => {return item.product.id === product.id});
@@ -49,8 +48,8 @@ export class CartAppComponent implements OnInit{
       //si no existe el item dentro del carrito entonces lo agregamos con la cantidad de 1
       this.items = [... this.items, {product: {... product}, quantity:1}];
     }
-    /* this.calculateTotal();
-    this.saveSession(); */
+    this.calculateTotal();
+    this.saveSession();
   }
 
   //la funcion recibe el id, luego lo filtra, si el id no es igual pasa, sino modifica la lista y no pasa
@@ -59,21 +58,16 @@ export class CartAppComponent implements OnInit{
     if(this.items.length == 0){
       sessionStorage.removeItem('cart');
     }
-    /* this.calculateTotal();
-    this.saveSession(); */
+    this.calculateTotal();
+    this.saveSession();
   }
 
-/*   //la funcion reduce recibe ((variable de storage, variable a modificar) => sumatoria, valor inicial)
+//la funcion reduce recibe ((variable de storage, variable a modificar) => sumatoria, valor inicial)
   calculateTotal(): void{
     this.total = this.items.reduce((accumulator, item) => accumulator + item.quantity * item.product.price, 0);
   }
   saveSession(): void{
     //con stringify se guarda todo el arreglo items como un string con la estructura de JSON
     sessionStorage.setItem('cart',JSON.stringify(this.items));
-  } */
-
-  setOpenCart(): void{
-    //switch para que haga lo contrario
-    this.showCart = !this.showCart;
   }
 }
