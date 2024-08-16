@@ -1,6 +1,7 @@
 import { Component, EventEmitter } from '@angular/core';
 import { CartItem } from '../../../models/cartItem';
 import { Router } from '@angular/router';
+import { SharingDataService } from '../../services/sharing-data.service';
 
 @Component({
   selector: 'cart',
@@ -13,10 +14,8 @@ export class CartComponent {
   items: CartItem[] = [];
 
   total = 0;
-  
-  idProductEventEmitter = new EventEmitter();
 
-  constructor(private router:Router){
+  constructor(private sharingDataService: SharingDataService, private router:Router){
     //le asignamos los items de los estados de las rutas
     //Extras con ? en caso de que sea null, state es con el objeto que le pasamos de la plantilla
     this.items = this.router.getCurrentNavigation()?.extras.state!['items'];
@@ -25,7 +24,8 @@ export class CartComponent {
   }
   
   onDeleteCart(id: number) {
-    this.idProductEventEmitter.emit(id);
+    //lo que hace es llamar el metodo get
+    this.sharingDataService.idProductEventEmitter.emit(id);
   }
 
 }

@@ -5,6 +5,7 @@ import { CatalogComponent } from './catalog/catalog.component';
 import { CartItem } from '../../models/cartItem';
 import { NavbarComponent } from './navbar/navbar.component';
 import { RouterOutlet } from '@angular/router';
+import { SharingDataService } from '../services/sharing-data.service';
 
 @Component({
   selector: 'cart-app',
@@ -17,14 +18,15 @@ export class CartAppComponent implements OnInit{
   items: CartItem[] = [];
   total: number = 0;
 
-  constructor(private service: ProductService){}
+  constructor(private sharingDataService: SharingDataService, private service: ProductService){}
   
   ngOnInit(): void {
     this.products = this.service.findAll();
     //si existe items obtenemos el JSON con la estructura JSON del tipo String de la sesion y lo convertimos a un arreglo de objeto del tipo items, sino un arreglo vacio
     this.items = JSON.parse(sessionStorage.getItem('cart') || '[]') ;
     this.calculateTotal();
-}
+    this.onDeleteCart();
+  }
 
   onAddCart(product: Product): void{
     //Se busca si el item ya existe dentro del arreglo de items
@@ -53,13 +55,16 @@ export class CartAppComponent implements OnInit{
   }
 
   //la funcion recibe el id, luego lo filtra, si el id no es igual pasa, sino modifica la lista y no pasa
-  onDeleteCart(id:number): void{
-    this.items = this.items.filter(item => item.product.id !== id);
-    if(this.items.length == 0){
-      sessionStorage.removeItem('cart');
-    }
-    this.calculateTotal();
-    this.saveSession();
+  onDeleteCart(): void{
+    this.sharingDataService.idProductEventEmitter.subscribe(id =>{
+      console.log(id + ' se ha ejecutado el evento idProductEventEmitter')
+      this.items = this.items.filter(item => item.product.id !== id);
+      if(this.items.length == 0){
+        sessionStorage.removeItem('cart');
+      }
+      this.calculateTotal();
+      this.saveSession();
+    })
   }
 
 //la funcion reduce recibe ((variable de storage, variable a modificar) => sumatoria, valor inicial)
