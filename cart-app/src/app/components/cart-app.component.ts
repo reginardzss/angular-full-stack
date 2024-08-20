@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../services/product.service';
-import { Product } from '../../models/product';
 import { CatalogComponent } from './catalog/catalog.component';
 import { CartItem } from '../../models/cartItem';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -14,7 +13,6 @@ import { SharingDataService } from '../services/sharing-data.service';
   templateUrl: './cart-app.component.html',
 })
 export class CartAppComponent implements OnInit{
-  products: Product[] = [];
   items: CartItem[] = [];
   total: number = 0;
 
@@ -24,7 +22,6 @@ export class CartAppComponent implements OnInit{
     private service: ProductService){}
   
   ngOnInit(): void {
-    this.products = this.service.findAll();
     //si existe items obtenemos el JSON con la estructura JSON del tipo String de la sesion y lo convertimos a un arreglo de objeto del tipo items, sino un arreglo vacio
     this.items = JSON.parse(sessionStorage.getItem('cart') || '[]') ;
     this.calculateTotal();
