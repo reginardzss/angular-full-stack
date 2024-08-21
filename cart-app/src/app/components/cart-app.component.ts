@@ -5,6 +5,7 @@ import { CartItem } from '../../models/cartItem';
 import { NavbarComponent } from './navbar/navbar.component';
 import { Router, RouterOutlet } from '@angular/router';
 import { SharingDataService } from '../services/sharing-data.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'cart-app',
@@ -59,26 +60,47 @@ export class CartAppComponent implements OnInit{
         //nombre de la llave y el valor
         state:{items: this.items, total: this.total}
       })
+      Swal.fire({
+        title: "Shopping Cart",
+        text: "Nuevo producto agregado al carro",
+        icon: "success"
+      });
     });
   }
 
   //la funcion recibe el id, luego lo filtra, si el id no es igual pasa, sino modifica la lista y no pasa
   onDeleteCart(): void{
     this.sharingDataService.idProductEventEmitter.subscribe(id =>{
-      console.log(id + ' se ha ejecutado el evento idProductEventEmitter')
-      this.items = this.items.filter(item => item.product.id !== id);
-      if(this.items.length == 0){
-        sessionStorage.removeItem('cart');
-      }
-      this.calculateTotal();
-      this.saveSession();
-      this.router.navigateByUrl('/',{skipLocationChange: true}).then(() => {
-        this.router.navigate(['/cart'], {
-          //nombre de la llave y el valor
-          state:{items: this.items, total: this.total}
-        })
-      })
-      
+      Swal.fire({
+        title: "¿Estás seguro/a que desea eliminar?",
+        text: "Cuidado el item se eliminará del carro de compras",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.items = this.items.filter(item => item.product.id !== id);
+          if(this.items.length == 0){
+            sessionStorage.removeItem('cart');
+          }
+          this.calculateTotal();
+          this.saveSession();
+          this.router.navigateByUrl('/',{skipLocationChange: true}).then(() => {
+            this.router.navigate(['/cart'], {
+              //nombre de la llave y el valor
+              state:{items: this.items, total: this.total}
+            })
+          })
+          
+          Swal.fire({
+            title: "¡Eliminado!",
+            text: "Se ha eliminado el item del carrito de compras",
+            icon: "success"
+          });
+        }
+      });
     })
   }
 
