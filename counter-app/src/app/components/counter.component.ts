@@ -19,13 +19,13 @@ export class CounterComponent {
       //lo estamos asignando cuando cambie el counter
       this.counter = counter;
     })
-    
+     
   }
 
   increment(): void{
     //this.counter++;
     //es una accion en forma de funcion
-    this.store.dispatch(increment());
+    this.store.dispatch(increment({add: 2}));
     console.log('incrementando...');
   }
 

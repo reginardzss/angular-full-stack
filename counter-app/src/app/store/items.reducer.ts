@@ -8,7 +8,7 @@ export const counterReducer = createReducer(
     initialState,
     //on sobre la accion sea increment entonces ejecuta la accion
     //le pasamos el estado y le indicamos como queremos que lo modifique
-    on(increment, (state) =>  state + 1), 
+    on(increment, (state, {add}) =>  state + add), 
     on (decrement, (state) => state - 1),
     on (reset, (state) => 0)
 )
